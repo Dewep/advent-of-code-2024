@@ -6,7 +6,7 @@ export async function read (file = 'input.txt') {
   return content
 }
 
-export async function readAndParseNumbers (file = 'input.txt') {
+export async function readAndParseMap (file = 'input.txt', splitter = '', transformer = null) {
   const content = await read(file)
 
   const input = []
@@ -16,8 +16,16 @@ export async function readAndParseNumbers (file = 'input.txt') {
       continue
     }
 
-    input.push(line.split(/\s+/).map(nb => +nb))
+    const parsedLine = line
+      .split(splitter)
+      .map(value => transformer ? transformer(value) : value)
+
+    input.push(parsedLine)
   }
 
   return input
+}
+
+export async function readAndParseNumbers (file = 'input.txt') {
+  return readAndParseMap(file, /\s+/, nb => +nb)
 }
